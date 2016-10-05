@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+	<title></title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		.wrapper{
+			width: 600px;
+			height: 800px;
+			position: relative;
+			border:1px solid black;
+			/*left: 50%;
+			top: 50%;
+			margin-top: -400px;
+			margin-left: -350px;*/
+			margin: 100px auto;
+		}
+		#show{
+			width: 400px;
+			height: 800px;
+			position: absolute;
+			bottom: 0;
+			
+		}
+		#button{
+			width: 200px;
+			height:800px;
+			position: absolute;
+			left: 400px;
+			border-left: 1px solid #ccc;
+			top: 2px;
+			
+		}
+		#button button{
+			cursor: pointer;
+			width: 150px;
+			height: 50px;
+			margin-top: 50px;
+			margin-left: 20px;
+		}
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<div id="show"></div>
+		<div id="button">
+			<button id="create">创建进程</button>
+			<button id="block">阻塞进程</button>
+			<button id="wake">激活进程</button>
+			<button id="timeover">时间片到</button>
+			<button id="call">调度进程</button>
+			<button id="stop">结束进程</button>
+			<button id="clear">清除页面</button>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var oShow = document.getElementById('show');
+		var index =1;
+		var ready=[];
+		var block= new Array();
+		var run = [];
+		var oCreate = document.getElementById('create');
+		var oBlock = document.getElementById('block');
+		var oWake = document.getElementById('wake');
+		var oTimeover = document.getElementById('timeover');
+		var oCall = document.getElementById('call');
+		var oStop = document.getElementById('stop');
+		var oClear = document.getElementById('clear');
+		oCreate.onclick = function(){
+			creatProcess();
+		};
+		oBlock.onclick = function(){
+			blockProcess();
+		};
+		oWake.onclick = function(){
+			wakeProcess();
+		};
+		oTimeover.onclick = function(){
+			timeoverProcess();
+		};
+		oCall.onclick = function(){
+			callProcess();
+		};
+		oStop.onclick= function(){
+			stopProcess();
+		};
+		oClear.onclick = function(){
+			clearProcess();
+		};
+
+		function creatProcess(){
+			if(run.length===0 &&ready.length==0 &&block.length==0){
+				index = 1;
+			}
+			var process1 = "process"+index;
+			ready.unshift(process1);
+			if(run.length==0){
+				var process = ready.pop();
+				run.unshift(process);
+			}
+			index++;
+			alert("进程创建成功！");
+			showProcess();
+		}
+		function showProcess(){
+			var div = document.createElement('div');
+			div.style.width='500px';
+			div.style.height='70px';
+			oShow.appendChild(div);
+			div.innerHTML = 'readyProcess：'+ ready+'<br/>'+
+							'blockProcess: '+block + '<br/>'+
+							'runningProcess:'+run +'<br/>'+'--------------------------';
+
+		}
+		function blockProcess(){
+			if (run.length!=0) {
+				var process = run.pop();
+				block.unshift(process);
+				if(ready.length!=0){
+					var temp = ready.pop();
+					run.unshift(temp);
+					}
+				else{
+						alert('暂无进程');
+					}
+					showProcess();
+				}
+
+		}
+		function wakeProcess(){
+			if (block.length!=0) {
+				var process = block.pop();
+				ready.unshift(process);
+			
+				if (run.length==0) {
+					var temp= ready.pop();
+					run.unshift(temp);
+
+				}
+				showProcess();
+			}
+		}
+		function timeoverProcess(){
+			if(run.length!=0){
+				var process = run.pop();
+				ready.unshift(process);
+			
+				if (ready.length!=0) {
+					var temp=ready.pop();
+					run.unshift(temp);
+				}
+		}
+			showProcess();
+		}
+		function callProcess(){
+			if (run.length!=0) {
+				var process = run.pop();
+				ready.unshift(process);
+				if (ready.length!=0) {
+					var temp = ready.pop();
+					run.unshift(temp);
+
+				}
+				showProcess();
+			}else{
+				alert('无进程正在执行');
+			}
+		}
+		function stopProcess(){
+			if(run.length!=0){
+				var process = run.pop();
+				ready.unshift(process);
+				if(ready.length!=0){
+					var temp = ready.pop();
+					run.unshift(temp);
+				}
+				showProcess();
+			}else{
+				alert('无进程正在执行');
+			}
+		}
+		function clearProcess(){
+			oShow.innerHTML="";
+		}
+	</script>
+</body>
+</html>
